@@ -12,6 +12,7 @@ import {
 } from '../primary-ports/stock.service.interface';
 import { Socket } from 'socket.io';
 import { StockModel } from '../models/stock.model';
+import { StockDto } from '../dtos/stock.dto';
 
 @WebSocketGateway()
 export class StockGateway {
@@ -31,10 +32,21 @@ export class StockGateway {
         stockModel,
       );
       const stockClients = await this.stockService.getStocks();
-      this.server.emit('stock', stockClient);
+      const stockDto: StockDto = {
+        stocks: stockClients,
+        stock: stockClient,
+      };
+      stock.emit('stockDto', stockDto);
       this.server.emit('stocks', stockClients);
-    } catch (e) {
-      stock._error(e.message);
-    }
+    } catch (e) {}
+  }
+
+  @SubscribeMessage('welcomeStock')
+  async handleWelcomeStockEvent(
+    @ConnectedSocket() socket: Socket,
+  ): Promise<void> {
+    const stockClients = await this.stockService.getStocks();
+
+    socket.emit('stocks', stockClients);
   }
 }
