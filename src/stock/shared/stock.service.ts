@@ -25,6 +25,19 @@ export class StockService implements IStockService {
     const stockEntities: Stock[] = JSON.parse(JSON.stringify(stocks));
     return stockEntities;
   }
+
+  async getStock(id: string): Promise<StockModel> {
+    const stockDb = await this.stockRepository.findOne({ id: id });
+    const stockModel: StockModel = {
+      id: stockDb.id,
+      currentValue: stockDb.currentValue,
+      initValue: stockDb.initValue,
+      description: stockDb.description,
+      stockName: stockDb.stockName,
+    };
+    return stockModel;
+  }
+
   async newStock(id: string, stockModel: StockModel): Promise<StockModel> {
     const stockDb = await this.stockRepository.findOne({
       stockName: stockModel.stockName,
