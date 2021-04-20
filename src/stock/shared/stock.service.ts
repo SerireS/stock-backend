@@ -5,6 +5,7 @@ import { IStockService } from '../../primary-ports/stock.service.interface';
 import { StockModel } from '../../models/stock.model';
 import { Stock } from '../../infrastructure/stock';
 import { Repository } from 'typeorm';
+import { StockDto } from '../../dtos/stock.dto';
 
 @Injectable()
 export class StockService implements IStockService {
@@ -71,7 +72,12 @@ export class StockService implements IStockService {
     }
   }
 
-  async updateStocks(id: string): Promise<Stock> {
-    return Promise.resolve(undefined);
+  async updateStocks(id: string, stock: StockModel): Promise<StockModel> {
+    await this.stockRepository.update(id, stock);
+    const updatedStock = await this.stockRepository.findOne(id);
+    if (updatedStock) {
+      return updatedStock;
+    }
+    throw new Error('Stock not found');
   }
 }

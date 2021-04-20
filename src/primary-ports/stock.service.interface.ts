@@ -9,5 +9,5 @@ export interface IStockService {
 
   delete(id: string): Promise<void>;
 
-  updateStocks(id: string): Promise<Stock>;
+  updateStocks(id: string, stock: StockModel): Promise<StockModel>;
 }
